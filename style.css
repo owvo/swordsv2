@@ -1,0 +1,168 @@
+/* Base Setup */
+:root {
+    /* Change this single value to uniformly adjust all spacing (top, row-to-row, and image-to-image) */
+    --gallery-gap: 25px; 
+    --img-size: 250px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #252626;
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden; /* Prevents unwanted horizontal scrolling layout issues */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Gallery Layout Structure */
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--gallery-gap); /* Top page margin matches the internal gaps */
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: var(--gallery-gap);
+    display: flex;
+}
+
+/* Infinite Conveyor Track */
+.track {
+    display: flex;
+    width: max-content;
+}
+
+.track img {
+    width: var(--img-size);
+    height: var(--img-size);
+    margin-right: var(--gallery-gap);
+    cursor: pointer;
+    user-select: none;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+}
+
+/* Conveyor Belt Animations */
+.row-ltr .track {
+    animation: scroll-ltr 25s linear infinite;
+}
+
+.row-rtl .track {
+    animation: scroll-rtl 25s linear infinite;
+}
+
+/* Left to Right Loop */
+@keyframes scroll-ltr {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0%); }
+}
+
+/* Right to Left Loop */
+@keyframes scroll-rtl {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+/* Pause tracks when an image is open to keep performance optimal */
+body.modal-open .track {
+    animation-play-state: paused;
+}
+
+/* Split Screen Overlay / Modal View */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #252626;
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* The Animated Moving Mirror Image */
+.animated-img {
+    position: fixed;
+    object-fit: cover;
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1001;
+    pointer-events: none; /* Avoid click interference during transitions */
+}
+
+/* Right Side Text Container */
+.text-side {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 50vw;
+    height: 100vh;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.3s; /* Delay waits for image to slide */
+    z-index: 1001;
+}
+
+.overlay.open .text-side {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.text-side textarea {
+    width: 100%;
+    height: 70%;
+    background: #1c1d1d;
+    border: 1px solid #3e4040;
+    color: #ffffff;
+    padding: 25px;
+    font-size: 18px;
+    line-height: 1.6;
+    resize: none;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.text-side textarea:focus {
+    border-color: #616464;
+}
+
+/* UI Elements */
+.close-btn {
+    position: fixed;
+    top: 30px;
+    right: 40px;
+    font-size: 40px;
+    color: #ffffff;
+    cursor: pointer;
+    z-index: 1002;
+    opacity: 0.6;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    user-select: none;
+}
+
+.close-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
